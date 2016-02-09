@@ -33,8 +33,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-class OPA{
-
 /*****************************************************************************/
 /** OPA shield configuration */
 	const int OPA_BAUDRATE = 9600;			/** Communication baudrate in bauds */
@@ -49,7 +47,6 @@ class OPA{
 	const int OPA_RESET_PIN = 7;
 
 	typedef enum{
-	
 	} OPA_PARAMETERS;
 	
 /*****************************************************************************/
@@ -147,8 +144,8 @@ class OPA{
 	} OPA_ERRORS;
 	
 /*****************************************************************************/	
+class OPA{
 public:	
-
 /** OPA class constructor **/
 	OPA();
 	OPA(OPA_ADDRESSES address);
@@ -188,7 +185,6 @@ private:
 	OPA_ERRORS error;
 	
 	void initPins();
-	
 };
 
 #endif
