@@ -1,0 +1,15 @@
+OPA				KEYWORD1
+enable			KEYWORD2
+disable     	KEYWORD2
+reset			KEYWORD2
+noteOn			KEYWORD2
+noteOff			KEYWORD2
+pitchBend		KEYWORD2
+allNotesOff		KEYWORD2
+allSoundsOff	KEYWORD2
+writeParameter	KEYWORD2
+readParameter	KEYWORD2
+writeProgram	KEYWORD2
+readProgram		KEYWORD2
+storeProgram	KEYWORD2
+loadProgram		KEYWORD2
