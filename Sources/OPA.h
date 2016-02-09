@@ -30,6 +30,9 @@
 #ifndef OPA_H
 #define OPA_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 class OPA{
 
 /*****************************************************************************/
@@ -146,38 +149,45 @@ class OPA{
 /*****************************************************************************/	
 public:	
 
-	/** OPA class constructor **/
-	OPA(OPAAddress address);
+/** OPA class constructor **/
+	OPA();
+	OPA(OPA_ADDRESSES address);
 	
-	/** Playing notes **/
-	void noteOn(OPA_ADDRESSES program, uint8_t note, uint8_t expression);
-	void noteOff(OPA_ADDRESSES program, uint8_t note);
-	void pitchBend(OPA_ADDRESSES program, int8_t coarse, int8_t fine);
-	void allNotesOff(OPA_ADDRESSES program);
+	void enable();
+	void disable();
+	void reset();
+
+/** Playing notes **/
+	void noteOn(OPA_PROGRAMS program, uint8_t note);
+	void noteOff(OPA_PROGRAMS program, uint8_t note);
+	void pitchBend(OPA_PROGRAMS program, int8_t coarse, int8_t fine);
+	void allNotesOff(OPA_PROGRAMS program);
 	void allSoundsOff();
 	
-	/** Reading & writing program parameters **/
-	void writeParameter(OPA_ADDRESSES program, uint8_t parameter, uint8_t value);
-	uint8_t readParameter(OPA_ADDRESSES program, uint8_t parameter);
+/** Reading & writing program parameters **/
+	void writeParameter(OPA_PROGRAMS program, uint8_t parameter, uint8_t value);
+	uint8_t readParameter(OPA_PROGRAMS program, uint8_t parameter);
 	
-	/** Reading & writing full programs **/
-	void writeProgram(OPA_ADDRESSES program, OpaProgram &programData);
-	void readProgram(OPA_ADDRESSES program, OpaProgram &programData);
+/** Reading & writing full programs **/
+	void writeProgram(OPA_PROGRAMS program, OpaProgram &programData);
+	void readProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	
-	/** Store and load programs from internal memory **/
-	void storeProgram(OPA_ADDRESSES program, int slot);
-	void loadProgram(OPA_ADDRESSES program, int slot);
+/** Store and load programs from internal memory **/
+	void storeProgram(OPA_PROGRAMS program, int slot);
+	void loadProgram(OPA_PROGRAMS program, int slot);
 
-	/** Error handling **/	
-	void clearError() 
-		{errors = OPA_ERROR_NONE;}
+/** Error handling **/	
+	void clearErrors() 
+		{error = OPA_ERROR_NONE;}
 		
-	OPA_ERRORS getErrors()
-		{return errors;}
+	OPA_ERRORS getError()
+		{return error;}
 	
 private:
-	OPAAddress address;
-	OPA_ERRORS errors;
+	OPA_ADDRESSES address;
+	OPA_ERRORS error;
+	
+	void initPins();
 	
 };
 

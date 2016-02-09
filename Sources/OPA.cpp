@@ -27,15 +27,30 @@
     SOFTWARE.
 */
  
-#include <OPA.h>
+#include "OPA.h"
+#include "Arduino.h"
 
 /*****************************************************************************/
 #define OPA_CS1_STATE(a) (a & 0x01)
 #define OPA_CS2_STATE(a) ((a >> 1) & 0x01)
 		
 /*****************************************************************************/
+OPA::OPA() :
+	address(OPA_ADDRESS_0),
+	error(OPA_ERROR_NONE)
+{
+	initPins();
+}
+
 OPA::OPA(OPA_ADDRESSES address) :
-	address(address)
+	address(address),
+	error(OPA_ERROR_NONE)
+{
+	initPins();
+}
+
+/*****************************************************************************/
+void OPA::initPins()
 {
 	pinMode(OPA_TX_PIN, INPUT);
 	pinMode(OPA_RX_PIN, INPUT);
@@ -48,15 +63,13 @@ OPA::OPA(OPA_ADDRESSES address) :
 	digitalWrite(OPA_CS2_PIN, 1);
 	digitalWrite(OPA_SWAP_PIN, 0);
 	digitalWrite(OPA_RESET_PIN, 0);
-	
-	errors = OPA_ERROR_NONE;
 }
-
+	
 /*****************************************************************************/
 void OPA::enable()
 {
-	digitalWrite(OPA_CS1_PIN, OPA_CS1_STATE(address);
-	digitalWrite(OPA_CS2_PIN, OPA_CS2_STATE(address);
+	digitalWrite(OPA_CS1_PIN, OPA_CS1_STATE(address));
+	digitalWrite(OPA_CS2_PIN, OPA_CS2_STATE(address));
 	Serial.begin(OPA_BAUDRATE);
 	Serial.setTimeout(OPA_SERIAL_TIMEOUT);
 	clearErrors();
@@ -76,7 +89,7 @@ void OPA::reset()
 	delay(2);
 	digitalWrite(OPA_RESET_PIN, 0);
 	delay(2);
-		errors = OPA_ERROR_NONE;
+	error = OPA_ERROR_NONE;
 }
 
 /*****************************************************************************/
@@ -132,7 +145,7 @@ void OPA::writeParameter(OPA_PROGRAMS program, uint8_t parameter, uint8_t value)
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMWRITE;
 	buffer[1] = program;
-	buffer[2] = parameter
+	buffer[2] = parameter;
     buffer[3] = value;
 	Serial.write(buffer, 4);
 }
@@ -143,8 +156,8 @@ uint8_t OPA::readParameter(OPA_PROGRAMS program, uint8_t parameter)
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMREAD;
 	buffer[1] = program;
-	buffer[2] = parameter
-    buffer[3] = value;
+	buffer[2] = parameter;
+    buffer[3] = 0;
 	Serial.write(buffer, 4);
 	
 /** Check the reply */
@@ -152,10 +165,10 @@ uint8_t OPA::readParameter(OPA_PROGRAMS program, uint8_t parameter)
 	if (len == 4) {
 		if (buffer[0] == OPA_CODE_PARAMWRITE)
 			return buffer[3];
-		errors |= OPA_ERROR_BADREPLY;
+		error = OPA_ERROR_BADREPLY;
 		return 0;
 	}
-	errors |= OPA_ERROR_TIMEOUT;
+	error = OPA_ERROR_TIMEOUT;
 	return 0;
 }
 
