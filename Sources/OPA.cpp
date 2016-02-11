@@ -139,24 +139,48 @@ void OPA::pitchBend(OPA_PROGRAMS program, int8_t coarse, int8_t fine)
 	Serial.write(buffer, 4);
 }
 
+
 /*****************************************************************************/
-void OPA::writeParameter(OPA_PROGRAMS program, uint8_t parameter, uint8_t value)
+void OPA::writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value)
+{
+	writeParam(OPA_PROGRAM_GLOBAL, param, value);
+}
+
+void OPA::writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value)
+{
+	uint8_t p = op * OPA_OP_PARAMS_NB + OPA_PROGS_PARAMS_NB + param;
+	writeParam(program, p, value);
+}
+
+uint8_t OPA::readGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value)
+{
+	return readParam(OPA_PROGRAM_GLOBAL, param);
+}
+
+uint8_t OPA::readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param)
+{
+	uint8_t p = op * OPA_OP_PARAMS_NB + OPA_PROGS_PARAMS_NB + param;
+	return readParam(program, p);
+}
+	
+/*****************************************************************************/
+void OPA::writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
 {
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMWRITE;
 	buffer[1] = program;
-	buffer[2] = parameter;
+	buffer[2] = param;
     buffer[3] = value;
 	Serial.write(buffer, 4);
 }
 
-uint8_t OPA::readParameter(OPA_PROGRAMS program, uint8_t parameter)
+uint8_t OPA::readParam(OPA_PROGRAMS program, uint8_t param)
 {
 /** Send a request */
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMREAD;
 	buffer[1] = program;
-	buffer[2] = parameter;
+	buffer[2] = param;
     buffer[3] = 0;
 	Serial.write(buffer, 4);
 	
@@ -183,10 +207,28 @@ void OPA::readProgram(OPA_PROGRAMS program, OpaProgram &programData)
 }
 
 /*****************************************************************************/	
-void OPA::storeProgram(OPA_PROGRAMS program, int slot)
+void OPA::storeProgram(OPA_PROGRAMS program, uint8_t slot)
 {
+    char buffer[3];
+	if (slot >= OPA_MAX_SLOTS) {
+		error = OPA_ERROR_BADPARAMETER;
+		return;
+	}
+    buffer[0] = OPA_CODE_PROGRAMSTORE;
+    buffer[1] = program;
+    buffer[2] = slot;
+	Serial.write(buffer, 3);
 }
 
-void OPA::loadProgram(OPA_PROGRAMS program, int slot)
+void OPA::loadProgram(OPA_PROGRAMS program, uint8_t slot)
 {
+	char buffer[3];
+	if (slot >= OPA_MAX_SLOTS) {
+		error = OPA_ERROR_BADPARAMETER;
+		return;
+	}
+    buffer[0] = OPA_CODE_PROGRAMLOAD;
+    buffer[1] = program;
+    buffer[2] = slot;
+	Serial.write(buffer, 3);
 }

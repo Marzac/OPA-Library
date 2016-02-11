@@ -37,7 +37,13 @@
 /** OPA shield configuration */
 	const int OPA_BAUDRATE = 9600;			/** Communication baudrate in bauds */
 	const int OPA_SERIAL_TIMEOUT = 500;		/** Communication timeout when reading */
- 
+
+/** OPA chip properties */
+	const int OPA_MAX_SLOTS = 90;			/** Number of program slots in internal memory */
+	const int OPA_GLOBAL_PARAMS_NB = 8;
+	const int OPA_PROGS_PARAMS_NB = 4;
+	const int OPA_OP_PARAMS_NB = 16;
+	
 /** OPA shield pin-mapping */
 	const int OPA_TX_PIN = 0;
 	const int OPA_RX_PIN = 1;
@@ -46,9 +52,6 @@
 	const int OPA_SWAP_PIN = 4;
 	const int OPA_RESET_PIN = 7;
 
-	typedef enum{
-	} OPA_PARAMETERS;
-	
 /*****************************************************************************/
 	typedef enum{
 		OPA_CODE_STATUS			= 0,
@@ -135,13 +138,51 @@
 		OPA_PROGRAM_5 = 5,
 		OPA_PROGRAM_6 = 6,
 		OPA_PROGRAM_7 = 4,
+		OPA_PROGRAM_GLOBAL = 254,
+		OPA_PROGRAM_ALL = 255,
 	} OPA_PROGRAMS;
 
 	typedef enum{
-		OPA_ERROR_NONE		= 0x00,
-		OPA_ERROR_TIMEOUT	= 0x01,
-		OPA_ERROR_BADREPLY	= 0x02,
+		OPA_OPERATOR_0 = 0,
+		OPA_OPERATOR_1 = 1,
+		OPA_OPERATOR_2 = 2,
+		OPA_OPERATOR_3 = 3,
+	} OPA_OPERATORS;
+	
+	typedef enum{
+		OPA_ERROR_NONE			= 0x00,
+		OPA_ERROR_TIMEOUT		= 0x01,
+		OPA_ERROR_BADREPLY		= 0x02,
+		OPA_ERROR_BADPARAMETER	= 0x10,
 	} OPA_ERRORS;
+	
+/*****************************************************************************/
+	typedef enum{
+		OPA_GLOBAL_VOLUME		= 0,
+		OPA_GLOBAL_COARSE		= 1,
+		OPA_GLOBAL_FINE			= 2,
+    } OPA_GLOBAL_PARAMETERS;
+
+	typedef enum{
+		OPA_PROGRAM_ALGORITM	= 0,
+		OPA_PROGRAM_VOLUME		= 2,
+		OPA_PROGRAM_PANNING		= 3,
+	} OPA_PROGRAM_PARAMETERS;
+
+	typedef enum{
+		OPA_OP_VOLUME			= 0,
+		OPA_OP_COARSE			= 1,
+		OPA_OP_FINE				= 2,
+		OPA_OP_ENVATTACK		= 3,
+		OPA_OP_ENVDECAY			= 4,
+		OPA_OP_ENVSUSTAINLEVEL	= 5,
+		OPA_OP_ENVINITLEVEL		= 6,
+		OPA_OP_ENVRELEASE		= 7,
+		OPA_OP_LFOSPEED			= 8,
+		OPA_OP_LFOAMOUNT		= 9,
+		OPA_OP_FEEDBACK			= 10,
+		OPA_OP_FLAGS			= 11,
+	} OPA_OP_PARAMETERS;
 	
 /*****************************************************************************/	
 class OPA{
@@ -161,17 +202,22 @@ public:
 	void allNotesOff(OPA_PROGRAMS program);
 	void allSoundsOff();
 	
-/** Reading & writing program parameters **/
-	void writeParameter(OPA_PROGRAMS program, uint8_t parameter, uint8_t value);
-	uint8_t readParameter(OPA_PROGRAMS program, uint8_t parameter);
+/** Reading & writing parameter helpers **/
+	void writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value);
+	void writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value);
+	void writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value);
+	
+	uint8_t readGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value);
+	uint8_t readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param);
+	uint8_t readParam(OPA_PROGRAMS program, uint8_t param);
 	
 /** Reading & writing full programs **/
 	void writeProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	void readProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	
 /** Store and load programs from internal memory **/
-	void storeProgram(OPA_PROGRAMS program, int slot);
-	void loadProgram(OPA_PROGRAMS program, int slot);
+	void storeProgram(OPA_PROGRAMS program, uint8_t slot);
+	void loadProgram(OPA_PROGRAMS program, uint8_t slot);
 
 /** Error handling **/	
 	void clearErrors() 
@@ -181,6 +227,7 @@ public:
 		{return error;}
 	
 private:
+
 	OPA_ADDRESSES address;
 	OPA_ERRORS error;
 	
