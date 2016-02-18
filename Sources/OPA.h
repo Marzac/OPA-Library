@@ -76,6 +76,7 @@
 		OPA_OP_HARD_LOW     = 4,
 		OPA_OP_SOFT_HIGH    = 8,
 		OPA_OP_HARD_HIGH    = 16,
+		OPA_OP_MUTED	    = 32,
 	}OPA_OP_FLAGSBITS;
 
 /*****************************************************************************/
