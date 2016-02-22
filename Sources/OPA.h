@@ -79,16 +79,22 @@
 		OPA_OP_MUTED	    = 32,
 	}OPA_OP_FLAGSBITS;
 
+	typedef enum{
+		OPA_GLOBAL_DEFAULT  = 1,
+		OPA_GLOBAL_STEALING	= 1,
+		OPA_GLOBAL_PROTECT	= 2,
+	}OPA_GLOBAL_FLAGSBITS;
+	
 /*****************************************************************************/
 	typedef struct{
 		uint8_t volume;
 		int8_t  coarse;
 		int8_t  fine;
+		uint8_t flags;
 		uint8_t reserved1;
 		uint8_t reserved2;
 		uint8_t reserved3;
 		uint8_t reserved4;
-		uint8_t reserved5;
 	}OpaGlobals;
 	
 /*****************************************************************************/
@@ -162,6 +168,7 @@
 		OPA_GLOBAL_VOLUME		= 0,
 		OPA_GLOBAL_COARSE		= 1,
 		OPA_GLOBAL_FINE			= 2,
+		OPA_GLOBAL_FLAGS		= 3,
     } OPA_GLOBAL_PARAMETERS;
 
 	typedef enum{
