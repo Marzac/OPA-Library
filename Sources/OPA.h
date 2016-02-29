@@ -1,5 +1,5 @@
 /**
-	fredslab.net : OPA Shield library for Arduino
+    fredslab.net : OPA Shield library for Arduino
 
     The MIT License (MIT)
 
@@ -35,26 +35,26 @@
 
 /*****************************************************************************/
 /** OPA shield configuration */
-	const int OPA_BAUDRATE = 9600;			/** Communication baudrate in bauds */
-	const int OPA_SERIAL_TIMEOUT = 500;		/** Communication timeout when reading */
+	const int OPA_BAUDRATE			= 115200;	/** Communication baudrate in bauds */
+	const int OPA_SERIAL_TIMEOUT	= 500;		/** Communication timeout when reading */
 
 /** OPA chip properties */
-	const int OPA_MAX_SLOTS = 90;			/** Number of program slots in internal memory */
-	const int OPA_GLOBAL_PARAMS_NB = 8;
-	const int OPA_PROGS_PARAMS_NB = 4;
-	const int OPA_OP_PARAMS_NB = 16;
+	const int OPA_MAX_SLOTS 		= 90;		/** Number of program slots in internal memory */
+	const int OPA_GLOBAL_PARAMS_NB	= 8;
+	const int OPA_PROGS_PARAMS_NB	= 12;
+	const int OPA_OP_PARAMS_NB		= 16;
 	
 /** OPA shield pin-mapping */
-	const int OPA_TX_PIN = 0;
-	const int OPA_RX_PIN = 1;
-	const int OPA_CS1_PIN = 2;
-	const int OPA_CS2_PIN = 3;
-	const int OPA_SWAP_PIN = 4;
-	const int OPA_RESET_PIN = 7;
+	const int OPA_TX_PIN 			= 0;
+	const int OPA_RX_PIN 			= 1;
+	const int OPA_CS1_PIN 			= 2;
+	const int OPA_CS2_PIN 			= 3;
+	const int OPA_SWAP_PIN 			= 4;
+	const int OPA_RESET_PIN 		= 7;
 
 /*****************************************************************************/
 	typedef enum{
-		OPA_CODE_STATUS			= 0,
+		OPA_CODE_VERSION		= 0,
 		OPA_CODE_NOTEON			= 1,
 		OPA_CODE_NOTEOFF		= 2,
 		OPA_CODE_ALLNOTESOFF	= 3,
@@ -63,9 +63,11 @@
 		OPA_CODE_PARAMREAD		= 6,
 		OPA_CODE_PROGRAMWRITE	= 7,
 		OPA_CODE_PROGRAMREAD	= 8,
-		OPA_CODE_PROGRAMSTORE	= 9,
-		OPA_CODE_PROGRAMLOAD	= 10,
-		OPA_CODE_PITCHBEND		= 11,
+		OPA_CODE_INTERNALSTORE	= 9,
+		OPA_CODE_INTERNALLOAD	= 10,
+		OPA_CODE_INTERNALWRITE	= 11,
+		OPA_CODE_INTERNALREAD	= 12,
+		OPA_CODE_PITCHBEND		= 13,
 	}OPA_CODE_MESSAGES;
 
 /*****************************************************************************/
@@ -99,6 +101,7 @@
 	
 /*****************************************************************************/
 	typedef struct{
+		uint8_t name[8];
 		uint8_t algorithm;
 		int8_t  reserved;
 		uint8_t volume;
@@ -172,9 +175,9 @@
     } OPA_GLOBAL_PARAMETERS;
 
 	typedef enum{
-		OPA_PROGRAM_ALGORITM	= 0,
-		OPA_PROGRAM_VOLUME		= 2,
-		OPA_PROGRAM_PANNING		= 3,
+		OPA_PROGRAM_ALGORITM	= 8,
+		OPA_PROGRAM_VOLUME		= 9,
+		OPA_PROGRAM_PANNING		= 10,
 	} OPA_PROGRAM_PARAMETERS;
 
 	typedef enum{
@@ -203,14 +206,18 @@ public:
 	void disable();
 	void reset();
 
+/** Status and version **/
+	char * readVersion();
+	
 /** Playing notes **/
-	void noteOn(OPA_PROGRAMS program, uint8_t note);
-	void noteOff(OPA_PROGRAMS program, uint8_t note);
+	void noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0);
+	void noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0);
 	void pitchBend(OPA_PROGRAMS program, int8_t coarse, int8_t fine);
 	void allNotesOff(OPA_PROGRAMS program);
 	void allSoundsOff();
 	
 /** Reading & writing parameter helpers **/
+	void setMemoryProtection(bool protection);
 	void writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value);
 	void writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value);
 	void writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value);
@@ -223,9 +230,11 @@ public:
 	void writeProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	void readProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	
-/** Store and load programs from internal memory **/
-	void storeProgram(OPA_PROGRAMS program, uint8_t slot);
-	void loadProgram(OPA_PROGRAMS program, uint8_t slot);
+/** Store, load, write and read programs from internal memory **/
+	void storeInternal(OPA_PROGRAMS program, uint8_t slot);
+	void loadInternal(OPA_PROGRAMS program, uint8_t slot);
+	void writeInternal(uint8_t slot, OpaProgram &programData);
+	void readInternal(uint8_t slot, OpaProgram &programData);
 
 /** Error handling **/	
 	void clearErrors() 
@@ -235,7 +244,6 @@ public:
 		{return error;}
 	
 private:
-
 	OPA_ADDRESSES address;
 	OPA_ERRORS error;
 	
