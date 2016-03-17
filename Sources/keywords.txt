@@ -1,27 +1,22 @@
-OPA					KEYWORD1
-enable				KEYWORD2
-disable     		KEYWORD2
-reset				KEYWORD2
+OPA				KEYWORD1
+enable			KEYWORD2
+disable     	KEYWORD2
+reset			KEYWORD2
 
-noteOn				KEYWORD2
-noteOff				KEYWORD2
-pitchBend			KEYWORD2
-allNotesOff			KEYWORD2
-allSoundsOff		KEYWORD2
+noteOn			KEYWORD2
+noteOff			KEYWORD2
+pitchBend		KEYWORD2
+allNotesOff		KEYWORD2
+allSoundsOff	KEYWORD2
 
-writeGlobalParam	KEYWORD2
-writeOperatorParam	KEYWORD2
-writeParam			KEYWORD2
+writeParameter	KEYWORD2
+readParameter	KEYWORD2
 
-readGlobalParam		KEYWORD2
-readOperatorParam	KEYWORD2
-readParameter		KEYWORD2
+writeProgram	KEYWORD2
+readProgram		KEYWORD2
 
-writeProgram		KEYWORD2
-readProgram			KEYWORD2
+storeProgram	KEYWORD2
+loadProgram		KEYWORD2
 
-storeProgram		KEYWORD2
-loadProgram			KEYWORD2
-
-clearError			KEYWORD2
-getErrors			KEYWORD2
+clearError		KEYWORD2
+getErrors		KEYWORD2

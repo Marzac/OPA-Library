@@ -93,36 +93,23 @@ void OPA::reset()
 }
 
 /*****************************************************************************/
-char * OPA::readVersion()
-{
-	static char version[24];
-	char buffer[1];
-    buffer[0] = OPA_CODE_VERSION;
-	Serial.write(buffer, 1);
-	if (Serial.readBytes(version, 24) == 24)
-		return version;
-	error = OPA_ERROR_TIMEOUT;
-	return 0;
-}
-
-/*****************************************************************************/
-void OPA::noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction)
+void OPA::noteOn(OPA_PROGRAMS program, uint8_t note)
 {
 	char buffer[4];
     buffer[0] = OPA_CODE_NOTEON;
     buffer[1] = program;
     buffer[2] = note;
-    buffer[3] = fraction;
+    buffer[3] = 0;
 	Serial.write(buffer, 4);
 }
 
-void OPA::noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction)
+void OPA::noteOff(OPA_PROGRAMS program, uint8_t note)
 {
 	char buffer[4];
     buffer[0] = OPA_CODE_NOTEOFF;
     buffer[1] = program;
     buffer[2] = note;
-    buffer[3] = fraction;
+    buffer[3] = 0;
 	Serial.write(buffer, 4);
 }
 
@@ -153,16 +140,6 @@ void OPA::pitchBend(OPA_PROGRAMS program, int8_t coarse, int8_t fine)
 }
 
 
-
-/*****************************************************************************/
-void OPA::setMemoryProtection(bool protection)
-{
-	int flags = readParam(OPA_PROGRAM_GLOBAL, OPA_GLOBAL_FLAGS);
-	flag &= ~OPA_GLOBAL_PROTECT;
-	if (protection) flag |= OPA_GLOBAL_PROTECT;
-	writeParam(OPA_PROGRAM_GLOBAL, OPA_GLOBAL_FLAGS, value);
-}
-
 /*****************************************************************************/
 void OPA::writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value)
 {
@@ -189,7 +166,6 @@ uint8_t OPA::readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PA
 /*****************************************************************************/
 void OPA::writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
 {
-/** Send a parameter */
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMWRITE;
 	buffer[1] = program;
@@ -200,7 +176,7 @@ void OPA::writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
 
 uint8_t OPA::readParam(OPA_PROGRAMS program, uint8_t param)
 {
-/** Send a parameter request */
+/** Send a request */
 	char buffer[4];
     buffer[0] = OPA_CODE_PARAMREAD;
 	buffer[1] = program;
@@ -209,7 +185,8 @@ uint8_t OPA::readParam(OPA_PROGRAMS program, uint8_t param)
 	Serial.write(buffer, 4);
 	
 /** Check the reply */
-	if (Serial.readBytes(buffer, 4) == 4) {
+	uint8_t len = Serial.readBytes(buffer, 4);
+	if (len == 4) {
 		if (buffer[0] == OPA_CODE_PARAMWRITE)
 			return buffer[3];
 		error = OPA_ERROR_BADREPLY;
@@ -230,7 +207,7 @@ void OPA::readProgram(OPA_PROGRAMS program, OpaProgram &programData)
 }
 
 /*****************************************************************************/	
-void OPA::storeInternal(OPA_PROGRAMS program, uint8_t slot)
+void OPA::storeProgram(OPA_PROGRAMS program, uint8_t slot)
 {
     char buffer[3];
 	if (slot >= OPA_MAX_SLOTS) {
@@ -243,7 +220,7 @@ void OPA::storeInternal(OPA_PROGRAMS program, uint8_t slot)
 	Serial.write(buffer, 3);
 }
 
-void OPA::loadInternal(OPA_PROGRAMS program, uint8_t slot)
+void OPA::loadProgram(OPA_PROGRAMS program, uint8_t slot)
 {
 	char buffer[3];
 	if (slot >= OPA_MAX_SLOTS) {
@@ -254,13 +231,4 @@ void OPA::loadInternal(OPA_PROGRAMS program, uint8_t slot)
     buffer[1] = program;
     buffer[2] = slot;
 	Serial.write(buffer, 3);
-}
-
-/*****************************************************************************/	
-void OPA::writeInternal(uint8_t slot, OpaProgram &programData)
-{
-}
-
-void OPA::readInternal(uint8_t slot, OpaProgram &programData)
-{
 }
