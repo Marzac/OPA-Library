@@ -2,7 +2,7 @@
  * OPA Shield
  * fredslab.net
  * Editor bridge sketch
- * 17/03/2016
+ * 11/02/2016
  */
  
 /** OPA shield pin mapping */
@@ -16,21 +16,16 @@
 /** Hardware setup */
 void setup()
 {
-	pinMode(OPA_TX, INPUT);
-	pinMode(OPA_RX, INPUT);
-	pinMode(OPA_CS1, OUTPUT);
-	pinMode(OPA_CS2, OUTPUT);
-	pinMode(OPA_SWAP, OUTPUT);
-	pinMode(OPA_RESET, OUTPUT);
+  pinMode(OPA_TX, INPUT);
+  pinMode(OPA_RX, INPUT);
+  pinMode(OPA_CS, OUTPUT);
+  pinMode(OPA_SWAP, OUTPUT);
 
-	digitalWrite(OPA_CS1, 0);
-	digitalWrite(OPA_CS2, 0);
-	digitalWrite(OPA_SWAP, 1);
-	digitalWrite(OPA_RESET, 0);
+  digitalWrite(OPA_CS, 0);
+  digitalWrite(OPA_SWAP, 1);
 }
 
 /** Main program */
 void loop()
 {
-// Do nothing
 }
