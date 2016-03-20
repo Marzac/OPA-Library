@@ -35,7 +35,7 @@
 
 /*****************************************************************************/
 /** OPA shield configuration */
-	const int OPA_BAUDRATE			= 57600;	/** Communication baudrate in bauds */
+	const unsigned int OPA_BAUDRATE	= 57600;	/** Communication baudrate in bauds */
 	const int OPA_SERIAL_TIMEOUT	= 500;		/** Communication timeout when reading */
 
 /** OPA chip properties */
