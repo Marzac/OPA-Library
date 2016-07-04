@@ -40,9 +40,14 @@
 
 /** OPA chip properties */
 	const int OPA_MAX_SLOTS 		= 104;		/** Number of program slots in internal memory */
+	
 	const int OPA_GLOBAL_PARAMS_NB	= 8;
 	const int OPA_PROGS_PARAMS_NB	= 12;
 	const int OPA_OP_PARAMS_NB		= 16;
+	const int OPA_KIT_SAMPLES_NB    = 32;
+	
+	const int OPA_ALLPROGS_ID		= 255;
+	const int OPA_PROGS_NB			= 8;
 	
 /** OPA shield pin-mapping */
 	const int OPA_TX_PIN 			= 0;
@@ -59,8 +64,8 @@
 		OPA_CODE_NOTEOFF			= 2,
 		OPA_CODE_ALLNOTESOFF		= 3,
 		OPA_CODE_ALLSOUNDSOFF		= 4,
-		OPA_CODE_PARAMWRITE			= 5,
-		OPA_CODE_PARAMREAD			= 6,
+		OPA_CODE_FMPARAMWRITE		= 5,
+		OPA_CODE_FMPARAMREAD		= 6,
 		OPA_CODE_GLOBALSPARAMWRITE	= 7,
 		OPA_CODE_GLOBALSPARAMREAD	= 8,
 		OPA_CODE_PROGRAMWRITE		= 9,
@@ -72,16 +77,24 @@
 		OPA_CODE_INTERNALWRITE		= 15,
 		OPA_CODE_INTERNALREAD		= 16,
 		OPA_CODE_PITCHBEND			= 17,
+		OPA_CODE_KITPARAMWRITE		= 18,
+		OPA_CODE_KITPARAMREAD		= 19,
+		OPA_CODE_KITWRITE           = 20,
+		OPA_CODE_KITREAD            = 21,
 	}OPA_CODE_MESSAGES;
-
+	    
+	
 /*****************************************************************************/
 	typedef enum{
 		OPA_GLOBAL_PROTECT	= 1,
+		OPA_GLOBAL_MUTEFM	= 2,
+		OPA_GLOBAL_MUTEKIT	= 4,
 		OPA_GLOBAL_DEFAULT  = OPA_GLOBAL_PROTECT,
 	}OPA_GLOBAL_FLAGBITS;
 	
 	typedef enum{
         PROGRAM_STEALING 	= 1,
+		PROGRAM_MUTED	 	= 2,
         PROGRAM_DEFAULT  	= PROGRAM_STEALING,
     }OPA_PROGRAM_FLAGBITS;
 
@@ -101,10 +114,10 @@
 		int8_t  coarse;
 		int8_t  fine;
 		uint8_t flags;
+		uint8_t fmVolume;
+		uint8_t kitVolume;
 		uint8_t reserved1;
 		uint8_t reserved2;
-		uint8_t reserved3;
-		uint8_t reserved4;
 	}OpaGlobals;
 	
 /*****************************************************************************/
@@ -134,11 +147,23 @@
 		uint8_t reserved3;
 		uint8_t reserved4;
 	}OpaOperatorParams;
-
+	
 	typedef struct{
 		OpaProgramParams params;
 		OpaOperatorParams opParams[4];
 	}OpaProgram;
+
+/*****************************************************************************/	
+	typedef struct{
+		uint8_t volume;
+		uint8_t panning;
+		uint8_t decay;
+		uint8_t reserved;
+	}OpaKitParams;
+
+	typedef struct{
+		OpaKitParams params[OPA_KIT_SAMPLES_NB];
+	}OpaKit;
 
 /*****************************************************************************/
 	typedef enum{
@@ -155,7 +180,7 @@
 		OPA_PROGRAM_4 = 4,
 		OPA_PROGRAM_5 = 5,
 		OPA_PROGRAM_6 = 6,
-		OPA_PROGRAM_7 = 4,
+		OPA_PROGRAM_7 = 7,
 		OPA_PROGRAM_ALL = 255,
 	} OPA_PROGRAMS;
 
@@ -181,6 +206,7 @@
 		OPA_GLOBAL_FLAGS		= 3,
     } OPA_GLOBAL_PARAMETERS;
 
+/*****************************************************************************/
 	typedef enum{
 		OPA_PROGRAM_NAME		= 0,
 		OPA_PROGRAM_ALGORITM	= 8,
@@ -205,6 +231,14 @@
 	} OPA_OP_PARAMETERS;
 	
 /*****************************************************************************/	
+	typedef enum{
+		OPA_SAMPLE_VOLUME		= 0,
+		OPA_SAMPLE_PANNING		= 1,
+		OPA_SAMPLE_DECAY		= 2,
+		OPA_SAMPLE_RESERVED		= 3,
+	}OPA_SAMPLE_PARAMETERS;
+	
+/*****************************************************************************/	
 class OPA{
 public:	
 /** OPA class constructor **/
@@ -220,27 +254,31 @@ public:
 	void setMemoryProtection(bool protection);
 	
 /** Playing notes **/
-	void noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0);
-	void noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0);
+	void noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0, uint8_t nuance = 255);
+	void noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction = 0, uint8_t nuance = 255);
 	void pitchBend(OPA_PROGRAMS program, int8_t coarse, int8_t fine);
 	void allNotesOff(OPA_PROGRAMS program);
 	void allSoundsOff();
 	
 /** Reading & writing parameter helpers **/
 	void writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value);
+	void writeFMParam(OPA_PROGRAMS program, uint8_t param, uint8_t value);
 	void writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value);
-	void writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value);
+	uint8_t writeKitParam(int sample, OPA_SAMPLE_PARAMETERS param, uint8_t value);
 	
 	uint8_t readGlobalParam(OPA_GLOBAL_PARAMETERS param);
+	uint8_t readFMParam(OPA_PROGRAMS program, uint8_t param);
 	uint8_t readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param);
-	uint8_t readParam(OPA_PROGRAMS program, uint8_t param);
+	uint8_t readKitParam(int sample, OPA_SAMPLE_PARAMETERS param);
 	
 /** Reading & writing full programs **/
-	void writeProgram(OPA_PROGRAMS program, OpaProgram &programData);
-	void readProgram(OPA_PROGRAMS program, OpaProgram &programData);
 	void writeGlobals(OpaGlobals &globalsData);
 	void readGlobals(OpaGlobals &globalsData);
-	
+	void writeProgram(OPA_PROGRAMS program, OpaProgram &programData);
+	void readProgram(OPA_PROGRAMS program, OpaProgram &programData);
+	void writeKit(OpaKit &kitData);
+	void readKit(OpaKit &kitData);
+		
 /** Store, load, write and read programs from internal memory **/
 	void storeInternal(OPA_PROGRAMS program, uint8_t slot);
 	void loadInternal(OPA_PROGRAMS program, uint8_t slot);

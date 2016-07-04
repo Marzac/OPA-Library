@@ -106,24 +106,26 @@ char * OPA::readVersion()
 }
 
 /*****************************************************************************/
-void OPA::noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction)
+void OPA::noteOn(OPA_PROGRAMS program, uint8_t note, uint8_t fraction, uint8_t nuance)
 {
-	char buffer[4];
+	char buffer[5];
     buffer[0] = OPA_CODE_NOTEON;
     buffer[1] = program;
     buffer[2] = note;
     buffer[3] = fraction;
-	Serial.write(buffer, 4);
+	buffer[4] = nuance;
+	Serial.write(buffer, 5);
 }
 
-void OPA::noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction)
+void OPA::noteOff(OPA_PROGRAMS program, uint8_t note, uint8_t fraction, uint8_t nuance)
 {
-	char buffer[4];
+	char buffer[5];
     buffer[0] = OPA_CODE_NOTEOFF;
     buffer[1] = program;
     buffer[2] = note;
     buffer[3] = fraction;
-	Serial.write(buffer, 4);
+	buffer[4] = nuance;
+	Serial.write(buffer, 5);
 }
 
 void OPA::allNotesOff(OPA_PROGRAMS program)
@@ -165,27 +167,16 @@ void OPA::setMemoryProtection(bool protection)
 void OPA::writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value)
 {
 	uint8_t p = op * OPA_OP_PARAMS_NB + OPA_PROGS_PARAMS_NB + param;
-	writeParam(program, p, value);
+	writeFMParam(program, p, value);
 }
 
 uint8_t OPA::readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param)
 {
 	uint8_t p = op * OPA_OP_PARAMS_NB + OPA_PROGS_PARAMS_NB + param;
-	return readParam(program, p);
+	return readFMParam(program, p);
 }
 	
 /*****************************************************************************/
-void OPA::writeParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
-{
-/** Send a parameter */
-	char buffer[4];
-    buffer[0] = OPA_CODE_PARAMWRITE;
-	buffer[1] = program;
-	buffer[2] = param;
-    buffer[3] = value;
-	Serial.write(buffer, 4);
-}
-
 void OPA::writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value)
 {
 /** Send a parameter */
@@ -196,25 +187,26 @@ void OPA::writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value)
 	Serial.write(buffer, 6);
 }
 
-uint8_t OPA::readParam(OPA_PROGRAMS program, uint8_t param)
+void OPA::writeFMParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
 {
-/** Send a parameter request */
+/** Send a parameter */
 	char buffer[4];
-    buffer[0] = OPA_CODE_PARAMREAD;
+    buffer[0] = OPA_CODE_FMPARAMWRITE;
 	buffer[1] = program;
 	buffer[2] = param;
-    buffer[3] = 0;
+    buffer[3] = value;
 	Serial.write(buffer, 4);
-	
-/** Check the reply */
-	if (Serial.readBytes(buffer, 4) == 4) {
-		if (buffer[0] == OPA_CODE_PARAMWRITE)
-			return buffer[3];
-		error = OPA_ERROR_BADREPLY;
-		return 0;
-	}
-	error = OPA_ERROR_TIMEOUT;
-	return 0;
+}
+
+uint8_t OPA::writeKitParam(int sample, OPA_SAMPLE_PARAMETERS param, uint8_t value)
+{
+/** Send a parameter */
+	char buffer[4];
+    buffer[0] = OPA_CODE_KITPARAMWRITE;
+	buffer[1] = sample;
+	buffer[2] = param;
+    buffer[3] = value;
+	Serial.write(buffer, 4);
 }
 
 uint8_t OPA::readGlobalParam(OPA_GLOBAL_PARAMETERS param)
@@ -237,6 +229,49 @@ uint8_t OPA::readGlobalParam(OPA_GLOBAL_PARAMETERS param)
 	return 0;
 }
 
+uint8_t OPA::readFMParam(OPA_PROGRAMS program, uint8_t param)
+{
+/** Send a parameter request */
+	char buffer[4];
+    buffer[0] = OPA_CODE_FMPARAMREAD;
+	buffer[1] = program;
+	buffer[2] = param;
+    buffer[3] = 0;
+	Serial.write(buffer, 4);
+	
+/** Check the reply */
+	if (Serial.readBytes(buffer, 4) == 4) {
+		if (buffer[0] == OPA_CODE_FMPARAMWRITE)
+			return buffer[3];
+		error = OPA_ERROR_BADREPLY;
+		return 0;
+	}
+	error = OPA_ERROR_TIMEOUT;
+	return 0;
+}
+
+uint8_t OPA::readKitParam(int sample, OPA_SAMPLE_PARAMETERS param)
+{
+/** Send a parameter request */
+	char buffer[4];
+    buffer[0] = OPA_CODE_KITPARAMREAD;
+	buffer[1] = sample;
+	buffer[2] = param;
+    buffer[3] = 0;
+	Serial.write(buffer, 4);
+	
+/** Check the reply */
+	if (Serial.readBytes(buffer, 4) == 4) {
+		if (buffer[0] == OPA_CODE_KITPARAMWRITE)
+			return buffer[3];
+		error = OPA_ERROR_BADREPLY;
+		return 0;
+	}
+	error = OPA_ERROR_TIMEOUT;
+	return 0;
+}
+
+	
 /*****************************************************************************/
 void OPA::writeProgram(OPA_PROGRAMS program, OpaProgram &programData)
 {
@@ -244,6 +279,16 @@ void OPA::writeProgram(OPA_PROGRAMS program, OpaProgram &programData)
 }
 
 void OPA::readProgram(OPA_PROGRAMS program, OpaProgram &programData)
+{
+}
+
+
+/*****************************************************************************/	
+void OPA::writeKit(OpaKit &kitData)
+{
+}
+
+void OPA::readKit(OpaKit &kitData)
 {
 }
 
@@ -282,3 +327,6 @@ void OPA::writeInternal(uint8_t slot, OpaProgram &programData)
 void OPA::readInternal(uint8_t slot, OpaProgram &programData)
 {
 }
+
+
+	
