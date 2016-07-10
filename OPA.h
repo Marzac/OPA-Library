@@ -25,6 +25,8 @@
 	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
+	
+	Version 0.22, 10/07/2016
 */
 
 #ifndef OPA_H
@@ -34,6 +36,11 @@
 #include <stdint.h>
 
 /*****************************************************************************/
+/** Arduino board in use */
+	#define ARDUINO_UNO
+	//#define ARDUINO_MEGA
+	//#define ARDUINO_LEONARDO
+	
 /** OPA shield configuration */
 	const unsigned int OPA_BAUDRATE	= 57600;	/** Communication baudrate in bauds */
 	const int OPA_SERIAL_TIMEOUT	= 500;		/** Communication timeout when reading */
@@ -41,13 +48,13 @@
 /** OPA chip properties */
 	const int OPA_MAX_SLOTS 		= 104;		/** Number of program slots in internal memory */
 
-	const int OPA_GLOBAL_PARAMS_NB	= 8;
-	const int OPA_PROGS_PARAMS_NB	= 12;
-	const int OPA_OP_PARAMS_NB		= 16;
-	const int OPA_KIT_SAMPLES_NB	= 32;
+	const int OPA_GLOBAL_PARAMS_NB	= 8;		/** Number of parameters in global configuration */
+	const int OPA_PROGS_PARAMS_NB	= 12;		/** Number of parameters in each program */
+	const int OPA_OP_PARAMS_NB		= 16;		/** Number of parameters in each operator */
+	const int OPA_KIT_SAMPLES_NB	= 32;		/** Number of samples in kit */
 
 	const int OPA_ALLPROGS_ID		= 255;
-	const int OPA_PROGS_NB			= 8;
+	const int OPA_PROGS_NB			= 8;		/** Number of programs in RAM */
 
 /** OPA shield pin-mapping */
 	const int OPA_TX_PIN 			= 0;
