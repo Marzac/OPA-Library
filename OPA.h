@@ -26,7 +26,7 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 	
-	Version 0.22, 10/07/2016
+	Version 1.0, 30/07/2016
 */
 
 #ifndef OPA_H
@@ -48,13 +48,13 @@
 /** OPA chip properties */
 	const int OPA_MAX_SLOTS 		= 104;		/** Number of program slots in internal memory */
 
+	const int OPA_PROGS_NB			= 8;		/** Number of programs in RAM */
 	const int OPA_GLOBAL_PARAMS_NB	= 8;		/** Number of parameters in global configuration */
 	const int OPA_PROGS_PARAMS_NB	= 12;		/** Number of parameters in each program */
 	const int OPA_OP_PARAMS_NB		= 16;		/** Number of parameters in each operator */
 	const int OPA_KIT_SAMPLES_NB	= 32;		/** Number of samples in kit */
 
 	const int OPA_ALLPROGS_ID		= 255;
-	const int OPA_PROGS_NB			= 8;		/** Number of programs in RAM */
 
 /** OPA shield pin-mapping */
 	const int OPA_TX_PIN 			= 0;
@@ -93,26 +93,26 @@
 
 /*****************************************************************************/
 	typedef enum{
-		OPA_GLOBAL_PROTECT	= 1,
-		OPA_GLOBAL_MUTEFM	= 2,
-		OPA_GLOBAL_MUTEKIT	= 4,
-		OPA_GLOBAL_DEFAULT	= OPA_GLOBAL_PROTECT,
+		OPA_GLOBAL_PROTECT		= 1,
+		OPA_GLOBAL_MUTEFM		= 2,
+		OPA_GLOBAL_MUTEKIT		= 4,
+		OPA_GLOBAL_DEFAULT		= OPA_GLOBAL_PROTECT,
 	}OPA_GLOBAL_FLAGBITS;
 
 	typedef enum{
-		PROGRAM_STEALING	= 1,
-		PROGRAM_MUTED		= 2,
-		PROGRAM_DEFAULT		= PROGRAM_STEALING,
+		OPA_PROGRAM_STEALING	= 1,
+		OPA_PROGRAM_MUTED		= 2,
+		OPA_PROGRAM_DEFAULT		= PROGRAM_STEALING,
 	}OPA_PROGRAM_FLAGBITS;
 
 	typedef enum{
-		OPA_OP_ABSOLUTE		= 1,
-		OPA_OP_SOFT_LOW		= 2,
-		OPA_OP_HARD_LOW		= 4,
-		OPA_OP_SOFT_HIGH	= 8,
-		OPA_OP_HARD_HIGH	= 16,
-		OPA_OP_MUTED		= 32,
-		OPA_OP_DEFAULT		= 0,
+		OPA_OP_ABSOLUTE			= 1,
+		OPA_OP_SOFT_LOW			= 2,
+		OPA_OP_HARD_LOW			= 4,
+		OPA_OP_SOFT_HIGH		= 8,
+		OPA_OP_HARD_HIGH		= 16,
+		OPA_OP_MUTED			= 32,
+		OPA_OP_DEFAULT			= 0,
 	}OPA_OP_FLAGBITS;
 
 /*****************************************************************************/
@@ -188,6 +188,7 @@
 		OPA_PROGRAM_5			= 5,
 		OPA_PROGRAM_6			= 6,
 		OPA_PROGRAM_7			= 7,
+		OPA_PROGRAM_DRUMS		= 9,
 		OPA_PROGRAM_ALL			= 255,
 	} OPA_PROGRAMS;
 
@@ -216,7 +217,7 @@
 /*****************************************************************************/
 	typedef enum{
 		OPA_PROGRAM_NAME		= 0,
-		OPA_PROGRAM_ALGORITM	= 8,
+		OPA_PROGRAM_ALGORITHM	= 8,
 		OPA_PROGRAM_VOLUME		= 9,
 		OPA_PROGRAM_PANNING		= 10,
 		OPA_PROGRAM_FLAGS		= 11,
@@ -237,13 +238,12 @@
 		OPA_OP_FLAGS			= 11,
 	} OPA_OP_PARAMETERS;
 
-/*****************************************************************************/
 	typedef enum{
 		OPA_SAMPLE_VOLUME		= 0,
 		OPA_SAMPLE_PANNING		= 1,
 		OPA_SAMPLE_DECAY		= 2,
 		OPA_SAMPLE_RESERVED		= 3,
-	}OPA_SAMPLE_PARAMETERS;
+	}OPA_KIT_PARAMETERS;
 
 /*****************************************************************************/
 class OPA{
@@ -296,7 +296,7 @@ public:
 	void clearErrors()
 		{error = OPA_ERROR_NONE;}
 
-	OPA_ERRORS getError()
+	OPA_ERRORS getErrors()
 		{return error;}
 
 private:

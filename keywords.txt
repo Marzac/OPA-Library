@@ -1,45 +1,76 @@
+######################################
+# Class
+#
+
+OPA						KEYWORD1
 
 ######################################
-OPA					KEYWORD1
+# Member functions
+#
 
+enable					KEYWORD2
+disable     			KEYWORD2
+reset					KEYWORD2
 
-######################################
-enable				KEYWORD2
-disable     		KEYWORD2
-reset				KEYWORD2
+readVersion				KEYWORD2
+setMemoryProtection 	KEYWORD2
 
-readVersion			KEYWORD2
-setMemoryProtection KEYWORD2
+noteOn					KEYWORD2
+noteOff					KEYWORD2
+pitchBend				KEYWORD2
+allNotesOff				KEYWORD2
+allSoundsOff			KEYWORD2
 
-noteOn				KEYWORD2
-noteOff				KEYWORD2
-pitchBend			KEYWORD2
-allNotesOff			KEYWORD2
-allSoundsOff		KEYWORD2
+writeGlobalParam		KEYWORD2
+writeFMParam			KEYWORD2
+writeOperatorParam		KEYWORD2
+writeKitParam			KEYWORD2
 
-writeGlobalParam	KEYWORD2
-writeOperatorParam	KEYWORD2
-writeParam			KEYWORD2
+readGlobalParam			KEYWORD2
+readFMParam				KEYWORD2
+readOperatorParam		KEYWORD2
+readKitParameter		KEYWORD2
 
-readGlobalParam		KEYWORD2
-readOperatorParam	KEYWORD2
-readParameter		KEYWORD2
+writeGlobals			KEYWORD2
+readGlobals				KEYWORD2
+writeProgram			KEYWORD2
+readProgram				KEYWORD2
+writeKit				KEYWORD2
+readKit					KEYWORD2
 
-writeProgram		KEYWORD2
-readProgram			KEYWORD2
-writeGlobals		KEYWORD2
-readGlobals			KEYWORD2
+storeInternal			KEYWORD2
+loadInternal			KEYWORD2
+writeInternal			KEYWORD2
+readInternal			KEYWORD2
 	
-storeInternal		KEYWORD2
-loadInternal		KEYWORD2
-writeInternal		KEYWORD2
-readInternal		KEYWORD2
-	
-clearError			KEYWORD2
-getErrors			KEYWORD2
-
+clearErrors				KEYWORD2
+getErrors				KEYWORD2
 
 ######################################
+# General constants
+#
+OPA_GLOBAL_PARAMS_NB	LITERAL1
+OPA_PROGS_PARAMS_NB		LITERAL1
+OPA_OP_PARAMS_NB		LITERAL1
+OPA_KIT_SAMPLES_NB		LITERAL1
+
+OPA_ALLPROGS_ID			LITERAL1
+OPA_PROGS_NB			LITERAL1
+
+######################################
+# Pin mapping
+#
+OPA_TX_PIN				LITERAL1
+OPA_RX_PIN				LITERAL1
+OPA_CS1_PIN				LITERAL1	
+OPA_CS2_PIN				LITERAL1
+OPA_SWAP_PIN			LITERAL1
+OPA_RESET_PIN			LITERAL1
+
+######################################
+# Parameters names
+#
+
 OPA_GLOBAL_VOLUME		LITERAL1
 OPA_GLOBAL_COARSE		LITERAL1
 OPA_GLOBAL_FINE			LITERAL1
@@ -64,7 +95,36 @@ OPA_OP_LFOAMOUNT		LITERAL1
 OPA_OP_FEEDBACK			LITERAL1
 OPA_OP_FLAGS			LITERAL1
 
-######################################		
+OPA_SAMPLE_VOLUME		LITERAL1
+OPA_SAMPLE_PANNING		LITERAL1
+OPA_SAMPLE_DECAY		LITERAL1
+OPA_SAMPLE_RESERVED		LITERAL1
+
+######################################
+# Configuration flags
+#
+
+OPA_GLOBAL_PROTECT		LITERAL1
+OPA_GLOBAL_MUTEFM		LITERAL1
+OPA_GLOBAL_MUTEKIT		LITERAL1
+OPA_GLOBAL_DEFAULT		LITERAL1
+
+OPA_PROGRAM_STEALING	LITERAL1
+OPA_PROGRAM_MUTED		LITERAL1
+OPA_PROGRAM_DEFAULT		LITERAL1
+
+OPA_OP_ABSOLUTE			LITERAL1
+OPA_OP_SOFT_LOW			LITERAL1
+OPA_OP_HARD_LOW			LITERAL1
+OPA_OP_SOFT_HIGH		LITERAL1
+OPA_OP_HARD_HIGH		LITERAL1
+OPA_OP_MUTED			LITERAL1
+OPA_OP_DEFAULT			LITERAL1
+		
+######################################
+# Identifier constants
+#
+
 OPA_ADDRESS_0			LITERAL1
 OPA_ADDRESS_1			LITERAL1
 OPA_ADDRESS_2			LITERAL1
@@ -85,6 +145,9 @@ OPA_OPERATOR_2			LITERAL1
 OPA_OPERATOR_3			LITERAL1
 
 ######################################		
+# Error codes
+#
+
 OPA_ERROR_NONE			LITERAL1
 OPA_ERROR_TIMEOUT		LITERAL1
 OPA_ERROR_BADREPLY		LITERAL1

@@ -1,9 +1,8 @@
-
 /*
- * OPA Shield
- * fredslab.net
+ * OPA Shield - fredslab.net
  * Controling the OPA shield using an Atari / Amiga
  * gamepad or joystick (DB9 connector)
+ * 10/07/16
  */
  
 #include <OPA.h>
