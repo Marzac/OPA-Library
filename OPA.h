@@ -102,7 +102,7 @@
 	typedef enum{
 		OPA_PROGRAM_STEALING	= 1,
 		OPA_PROGRAM_MUTED		= 2,
-		OPA_PROGRAM_DEFAULT		= PROGRAM_STEALING,
+		OPA_PROGRAM_DEFAULT		= OPA_PROGRAM_STEALING,
 	}OPA_PROGRAM_FLAGBITS;
 
 	typedef enum{
@@ -271,12 +271,12 @@ public:
 	void writeGlobalParam(OPA_GLOBAL_PARAMETERS param, uint8_t value);
 	void writeFMParam(OPA_PROGRAMS program, uint8_t param, uint8_t value);
 	void writeOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param, uint8_t value);
-	uint8_t writeKitParam(int sample, OPA_SAMPLE_PARAMETERS param, uint8_t value);
+	uint8_t writeKitParam(int sample, OPA_KIT_PARAMETERS param, uint8_t value);
 
 	uint8_t readGlobalParam(OPA_GLOBAL_PARAMETERS param);
 	uint8_t readFMParam(OPA_PROGRAMS program, uint8_t param);
 	uint8_t readOperatorParam(OPA_PROGRAMS program, OPA_OPERATORS op, OPA_OP_PARAMETERS param);
-	uint8_t readKitParam(int sample, OPA_SAMPLE_PARAMETERS param);
+	uint8_t readKitParam(int sample, OPA_KIT_PARAMETERS param);
 
 /** Reading & writing full programs **/
 	void writeGlobals(OpaGlobals &globalsData);

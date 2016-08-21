@@ -209,7 +209,7 @@ void OPA::writeFMParam(OPA_PROGRAMS program, uint8_t param, uint8_t value)
 	SerialPort.write(buffer, 4);
 }
 
-uint8_t OPA::writeKitParam(int sample, OPA_SAMPLE_PARAMETERS param, uint8_t value)
+uint8_t OPA::writeKitParam(int sample, OPA_KIT_PARAMETERS param, uint8_t value)
 {
 /** Send a parameter */
 	char buffer[4];
@@ -261,7 +261,7 @@ uint8_t OPA::readFMParam(OPA_PROGRAMS program, uint8_t param)
 	return 0;
 }
 
-uint8_t OPA::readKitParam(int sample, OPA_SAMPLE_PARAMETERS param)
+uint8_t OPA::readKitParam(int sample, OPA_KIT_PARAMETERS param)
 {
 /** Send a parameter request */
 	char buffer[4];
