@@ -1,6 +1,6 @@
 # OPA-Library
 OPA shield library for Arduino
-Version 0.22, 10/07/2016
+Version 0.23, 11/09/2016
 
 Released under the MIT License (MIT), please refer to LICENCE file for more information  
 
